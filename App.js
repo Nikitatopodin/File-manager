@@ -1,7 +1,9 @@
 import path, { join } from 'node:path';
 import { fileURLToPath } from 'url';
 import { goUp, cd } from '../node-file-manager/navigation.js';
-import { list, cat, create, rn, cp, remove, move, calcHash, zip, unzip } from './fs.js';
+import { list, cat, create, rn, cp, remove, move } from './fs.js';
+import { calcHash } from './hash.js';
+import { zip, unzip } from './compression.js';
 import { logCPUArch, logCPUInfo, logEOL, logHomeDir, logUserName } from './os.js';
 import { parsePaths } from './utils.js';
 
@@ -12,6 +14,16 @@ const startApp = async () => {
   let welcomeMsg = '';
   const argvArr = process.argv.slice(2);
   let workingDir = __dirname;
+
+  if (argvArr.length > 0) {
+    argvArr.forEach((arg) => {
+      if (arg.startsWith('--username')) {
+        welcomeMsg += (`Welcome to the File Manager, ${arg.slice(11)}!`);
+      }
+    })
+  }
+  console.log(welcomeMsg);
+  console.log(`You are currently in ${workingDir}`);
 
   const input = process.stdin;
 
@@ -74,35 +86,41 @@ const startApp = async () => {
         break;
       case (str.startsWith('cp')):
         const copyPaths = parsePaths(str.slice(3), workingDir);
-        if (!copyPaths) break;
+        if (!copyPaths) {
+          console.log(`You are currently in ${workingDir}`);
+          break;
+        }
         await cp(copyPaths.filePath, copyPaths.newFilePath);
+        console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('mv')):
         const movePaths = parsePaths(str.slice(3), workingDir);
-        if (!movePaths) break;
+        if (!movePaths) {
+          console.log(`You are currently in ${workingDir}`);
+          break;
+        }
         await move(movePaths.filePath, movePaths.newFilePath);
+        console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('compress')):
         const zipPaths = parsePaths(str.slice(9), workingDir);
-        if (!zipPaths) break;
+        if (!zipPaths) {
+          console.log(`You are currently in ${workingDir}`);
+          break;
+        }
         await zip(zipPaths.filePath, zipPaths.newFilePath);
+        console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('decompress')):
         const unzipPaths = parsePaths(str.slice(11), workingDir);
-        if (!unzipPaths) break;
+        if (!unzipPaths) {
+          console.log(`You are currently in ${workingDir}`);
+          break;
+        }
         await unzip(unzipPaths.filePath, unzipPaths.newFilePath);
+        console.log(`You are currently in ${workingDir}`);
         break;
     }
   })
-
-  if (argvArr.length > 0) {
-    argvArr.forEach((arg) => {
-      if (arg.startsWith('--username')) {
-        welcomeMsg += (`Welcome to the File Manager, ${arg.slice(11)}!`);
-      }
-    })
-  }
-  console.log(welcomeMsg);
-  console.log(`You are currently in ${workingDir}`);
 }
 await startApp();

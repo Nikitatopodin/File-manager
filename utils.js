@@ -1,4 +1,5 @@
 import { join } from 'node:path';
+import { stat } from 'node/fs:promises';
 
 const parsePaths = (str, workingDir) => {
   const firstQuotes = str.indexOf('"');
@@ -18,4 +19,12 @@ const parsePaths = (str, workingDir) => {
   return { filePath, newFilePath }
 }
 
-export { parsePaths }
+const getStatsPromise = async (filePath) => {
+  return new Promise((resolve) => {
+    resolve(stat(filePath), (_, stats) => {
+      return stats;
+    })
+  })
+}
+
+export { parsePaths, getStatsPromise };

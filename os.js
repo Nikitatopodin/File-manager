@@ -26,18 +26,30 @@ const logCPUInfo = async () => {
 }
 
 const logHomeDir = async () => {
-  const homeDir = homedir();
-  console.log(homeDir);
+  try {
+    const homeDir = homedir();
+    console.log(homeDir);
+  } catch {
+    console.log('Operation failed');
+  }
 }
 
 const logUserName = async () => {
-  const userInform = userInfo();
-  console.log(userInform.username);
+  try {
+    const userInform = userInfo();
+    console.log(userInform.username);
+  } catch {
+    console.log('Operation failed');
+  }
 }
 
 const logCPUArch = async () => {
-  const architecture = arch();
-  console.log(architecture);
+  try {
+    const architecture = arch();
+    console.log(architecture);
+  } catch {
+    console.log('Operation failed');
+  }
 }
 
 export { logEOL, logCPUInfo, logHomeDir, logUserName, logCPUArch }

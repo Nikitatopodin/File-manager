@@ -1,19 +1,7 @@
-import { readdir, appendFile, rename, rm, stat, access } from 'node:fs/promises';
+import { readdir, appendFile, rename, rm, access } from 'node:fs/promises';
 import { createReadStream, createWriteStream, } from 'node:fs';
 import { join } from 'node:path';
-import { createHash } from 'node:crypto';
-import { createBrotliCompress, createBrotliDecompress } from 'node:zlib';
-import { pipeline } from 'node:stream/promises';
-
-const hash = createHash('sha256');
-
-const getStatsPromise = async (filePath) => {
-  return new Promise((resolve) => {
-    resolve(stat(filePath), (_, stats) => {
-      return stats;
-    })
-  })
-}
+import { getStatsPromise } from './utils';
 
 const list = async (currentDir) => {
   const dirPath = currentDir;
@@ -69,7 +57,6 @@ const create = async (currentDir, fileName) => {
 }
 
 const rn = async (filePath, newFilePath) => {
-  console.log(filePath, newFilePath)
   const fileDirArr = filePath.split('\\');
   const fileDir = fileDirArr.slice(0, fileDirArr.length - 1).join('\\');
   const newFileDirArr = newFilePath.split('\\');
@@ -83,7 +70,7 @@ const rn = async (filePath, newFilePath) => {
 
 const cp = async (filePath, newDir) => {
   try {
-    await access(filePath)
+    await access(filePath);
     const readStream = createReadStream(filePath);
     readStream.on('error', _ => console.log('Operation failed'));
     const writeStream = createWriteStream(newDir);
@@ -114,42 +101,4 @@ const move = async (filePath, newDir) => {
   }
 }
 
-const calcHash = async (filePath) => {
-  return new Promise((resolve) => {
-    const input = createReadStream(filePath);
-    input.on('data', (data) => {
-      resolve(hash.update(data).digest('hex'));
-    })
-    input.on('error', _ => console.log('Operation failed'));
-  })
-}
-
-const zip = async (filePath, newFilePath) => {
-  try {
-    await access(filePath);
-    await pipeline(
-      createReadStream(filePath),
-      createBrotliCompress(),
-      createWriteStream(newFilePath),
-    );
-  } catch {
-    console.log('Operation failed')
-  }
-
-}
-
-const unzip = async (filePath, newFilePath) => {
-  try {
-    await access(filePath);
-    await pipeline(
-      createReadStream(filePath),
-      createBrotliDecompress(),
-      createWriteStream(newFilePath),
-    );
-  } catch {
-    console.log('Operation failed');
-  }
-
-}
-
-export { list, cat, create, rn, cp, remove, move, calcHash, zip, unzip };
+export { list, cat, create, rn, cp, remove, move };
