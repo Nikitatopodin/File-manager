@@ -1,24 +1,22 @@
-import path, { join } from 'node:path';
-import { fileURLToPath } from 'url';
-import { goUp, cd } from '../node-file-manager/navigation.js';
+import { join } from 'node:path';
+import { goUp, cd } from './navigation.js';
 import { list, cat, create, rn, cp, remove, move } from './fs.js';
 import { calcHash } from './hash.js';
 import { zip, unzip } from './compression.js';
 import { logCPUArch, logCPUInfo, logEOL, logHomeDir, logUserName } from './os.js';
 import { parsePaths } from './utils.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const startApp = async () => {
   let welcomeMsg = '';
+  let goodbyeMsg = '';
   const argvArr = process.argv.slice(2);
-  let workingDir = __dirname;
+  let workingDir = await logHomeDir();
 
   if (argvArr.length > 0) {
     argvArr.forEach((arg) => {
       if (arg.startsWith('--username')) {
-        welcomeMsg += (`Welcome to the File Manager, ${arg.slice(11)}!`);
+        welcomeMsg += `Welcome to the File Manager, ${arg.slice(11)}!`;
+        goodbyeMsg += `Thank you for using File Manager, ${arg.slice(11)}, goodbye!`;
       }
     })
   }
@@ -27,6 +25,10 @@ const startApp = async () => {
 
   const input = process.stdin;
 
+  process.on('SIGINT', () => {
+    console.log(goodbyeMsg);
+    process.exit();
+  });
   input.on('data', async (data) => {
     const str = data.toString('utf-8').trim();
     switch (true) {
@@ -35,7 +37,7 @@ const startApp = async () => {
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('cat')):
-        console.log(await cat(join(workingDir, str.slice(4))));
+        await cat(join(workingDir, str.slice(4)));
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('ls')):
@@ -44,7 +46,10 @@ const startApp = async () => {
         break;
       case (str.startsWith('rn')):
         const renamePaths = parsePaths(str.slice(3), workingDir);
-        if (!renamePaths) break;
+        if (!renamePaths) {
+          console.log(`You are currently in ${workingDir}`);
+          break;
+        }
         await rn(renamePaths.filePath, renamePaths.newFilePath);
         console.log(`You are currently in ${workingDir}`);
         break;
@@ -120,6 +125,9 @@ const startApp = async () => {
         await unzip(unzipPaths.filePath, unzipPaths.newFilePath);
         console.log(`You are currently in ${workingDir}`);
         break;
+      case (str === '.exit'):
+        console.log(goodbyeMsg);
+        process.exit();
     }
   })
 }

@@ -29,6 +29,7 @@ const logHomeDir = async () => {
   try {
     const homeDir = homedir();
     console.log(homeDir);
+    return homeDir;
   } catch {
     console.log('Operation failed');
   }

@@ -1,12 +1,11 @@
 import { join } from 'node:path';
-import { stat } from 'node/fs:promises';
+import { stat } from 'node:fs/promises'
 
 const parsePaths = (str, workingDir) => {
   const firstQuotes = str.indexOf('"');
   const secondQuotes = str.indexOf('"', firstQuotes + 1);
   const thirdQuotes = str.indexOf('"', secondQuotes + 1);
   const fourthQuotes = str.indexOf('"', thirdQuotes + 1);
-  console.log(fourthQuotes);
   if (fourthQuotes === -1 || fourthQuotes === 0) {
     console.log('Invalid input');
     return;

@@ -1,7 +1,7 @@
 import { readdir, appendFile, rename, rm, access } from 'node:fs/promises';
 import { createReadStream, createWriteStream, } from 'node:fs';
 import { join } from 'node:path';
-import { getStatsPromise } from './utils';
+import { getStatsPromise } from './utils.js';
 
 const list = async (currentDir) => {
   const dirPath = currentDir;
