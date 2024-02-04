@@ -1,0 +1,12 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "start.js",
+  "type": "module",
+  "scripts": {
+    "start": "node App.js --username=Nick"
+  },
+  "author": "",
+  "license": "ISC"
+}
