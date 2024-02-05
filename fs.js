@@ -34,8 +34,8 @@ const list = async (currentDir) => {
       }
       return 1;
     });
-  } catch (err) {
-    console.log(err);
+  } catch {
+    console.log('Operation failed');
   }
   console.table(resultArr);
 };
