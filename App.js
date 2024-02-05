@@ -4,7 +4,7 @@ import { list, cat, create, rn, cp, remove, move } from './fs.js';
 import { calcHash } from './hash.js';
 import { zip, unzip } from './compression.js';
 import { logCPUArch, logCPUInfo, logEOL, logHomeDir, logUserName } from './os.js';
-import { parsePaths } from './utils.js';
+import { parsePaths, parseSinglePath } from './utils.js';
 
 const startApp = async () => {
   let welcomeMsg = '';
@@ -37,7 +37,7 @@ const startApp = async () => {
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('cat')):
-        await cat(join(workingDir, str.slice(4)));
+        console.log(await cat(join(workingDir, parseSinglePath(str.slice(4)))));
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('ls')):
@@ -54,7 +54,7 @@ const startApp = async () => {
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('add')):
-        await create(workingDir, str.slice(4));
+        await create(workingDir, parseSinglePath(str.slice(4)));
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('rm')):
@@ -62,7 +62,7 @@ const startApp = async () => {
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('cd')):
-        workingDir = await cd(workingDir, str.slice(3));
+        workingDir = await cd(workingDir, parseSinglePath(str.slice(3)));
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str === 'os --EOL'):
@@ -86,7 +86,7 @@ const startApp = async () => {
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('hash')):
-        console.log(await calcHash(str.slice(5)));
+        console.log(await calcHash(join(workingDir, parseSinglePath(str.slice(5)))));
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('cp')):
@@ -128,6 +128,8 @@ const startApp = async () => {
       case (str === '.exit'):
         console.log(goodbyeMsg);
         process.exit();
+      default:
+        console.log('Invalid input');
     }
   })
 }

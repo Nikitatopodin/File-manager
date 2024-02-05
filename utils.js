@@ -1,6 +1,16 @@
 import { join } from 'node:path';
 import { stat } from 'node:fs/promises'
 
+const parseSinglePath = (str) => {
+  const firstQuotes = str.indexOf('"');
+  const secondQuotes = str.indexOf('"', firstQuotes + 1);
+  if (secondQuotes !== -1 && secondQuotes !== 0) {
+    const path = str.slice(firstQuotes + 1, secondQuotes);
+    return path;
+  }
+  return str
+}
+
 const parsePaths = (str, workingDir) => {
   const firstQuotes = str.indexOf('"');
   const secondQuotes = str.indexOf('"', firstQuotes + 1);
@@ -20,10 +30,8 @@ const parsePaths = (str, workingDir) => {
 
 const getStatsPromise = async (filePath) => {
   return new Promise((resolve) => {
-    resolve(stat(filePath), (_, stats) => {
-      return stats;
-    })
+    resolve(stat(filePath));
   })
 }
 
-export { parsePaths, getStatsPromise };
+export { parsePaths, parseSinglePath, getStatsPromise };

@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { access } from 'node:fs/promises';
 
 const goUp = async (currentDir) => {
   const currentDirArr = currentDir.split('\\');
@@ -10,8 +11,21 @@ const goUp = async (currentDir) => {
 }
 
 const cd = async (currentDir, newDir) => {
-  const result = path.join(currentDir, newDir);
-  return result
+  let result;
+  try {
+    result = path.join(currentDir, newDir);
+    await access(result);
+    return result;
+  } catch (error) {
+    try {
+      result = path.join(newDir);
+      await access(result);
+      return result;
+    } catch (error) {
+      console.log('Operation failed');
+      return currentDir;
+    }
+  }
 }
 
 export { goUp, cd };

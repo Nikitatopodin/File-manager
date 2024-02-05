@@ -5,7 +5,7 @@
   "main": "App.js",
   "type": "module",
   "scripts": {
-    "start": "node App.js --username=Nick"
+    "start": "node App.js"
   },
   "author": "",
   "license": "ISC"

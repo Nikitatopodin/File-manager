@@ -4,13 +4,14 @@ import { join } from 'node:path';
 import { getStatsPromise } from './utils.js';
 
 const list = async (currentDir) => {
-  const dirPath = currentDir;
   const promiseArr = [];
   const resultArr = [];
   try {
-    const files = await readdir(dirPath);
+    const files = await readdir(currentDir);
     for (let i = 0; i < files.length; i++) {
-      promiseArr.push(await getStatsPromise(join(currentDir, files[i])));
+      try {
+        promiseArr.push(await getStatsPromise(join(currentDir, files[i])));
+      } catch { }
     }
     for (let i = 0; i < promiseArr.length; i++) {
       resultArr.push({ Name: files[i], Type: promiseArr[i].isDirectory() ? 'directory' : 'file' });
@@ -33,8 +34,8 @@ const list = async (currentDir) => {
       }
       return 1;
     });
-  } catch {
-    console.log('Operation failed');
+  } catch (err) {
+    console.log(err);
   }
   console.table(resultArr);
 };
@@ -70,10 +71,13 @@ const rn = async (filePath, newFilePath) => {
 
 const cp = async (filePath, newDir) => {
   try {
+    const filePathArr = filePath.split('\\');
+    const fileName = filePathArr.slice(filePathArr.length - 1).join('\\');
+    const newDirPath = join(newDir, fileName);
     await access(filePath);
     const readStream = createReadStream(filePath);
     readStream.on('error', _ => console.log('Operation failed'));
-    const writeStream = createWriteStream(newDir);
+    const writeStream = createWriteStream(newDirPath);
     readStream.pipe(writeStream);
   } catch {
     console.log('Operation failed')
@@ -90,10 +94,13 @@ const remove = async (filePath) => {
 
 const move = async (filePath, newDir) => {
   try {
+    const filePathArr = filePath.split('\\');
+    const fileName = filePathArr.slice(filePathArr.length - 1).join('\\');
+    const newDirPath = join(newDir, fileName);
     await access(filePath);
     const readStream = createReadStream(filePath);
     readStream.on('error', _ => console.log('Operation failed'));
-    const writeStream = createWriteStream(newDir);
+    const writeStream = createWriteStream(newDirPath);
     readStream.pipe(writeStream);
     rm(filePath);
   } catch {
