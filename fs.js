@@ -92,9 +92,9 @@ const cp = async (filePath, newDir) => {
   }
 }
 
-const remove = async (filePath) => {
+const remove = async (currentDir, filePath) => {
   try {
-    await rm(filePath);
+    await rm(join(currentDir, filePath));
   } catch {
     console.log('Operation failed')
   }

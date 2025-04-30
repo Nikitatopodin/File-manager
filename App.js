@@ -62,7 +62,7 @@ const startApp = async () => {
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('rm')):
-        await remove(str.slice(3));
+        await remove(workingDir, parseSinglePath(str.slice(3)));
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('cd')):
