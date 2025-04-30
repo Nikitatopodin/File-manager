@@ -1,4 +1,4 @@
-import { readdir, appendFile, rename, rm, access } from 'node:fs/promises';
+import { readdir, appendFile, rename, rm, access, mkdir} from 'node:fs/promises';
 import { createReadStream, createWriteStream, } from 'node:fs';
 import { join } from 'node:path';
 import { getStatsPromise } from './utils.js';
@@ -57,6 +57,14 @@ const create = async (currentDir, fileName) => {
 
 }
 
+const makeDir = async (currentDir, newDirName) => {
+  try {
+    await mkdir(join(currentDir, newDirName))
+  } catch {
+    console.log('Operation failed');
+  }
+}
+
 const rn = async (filePath, newFilePath) => {
   const fileDirArr = filePath.split('\\');
   const fileDir = fileDirArr.slice(0, fileDirArr.length - 1).join('\\');
@@ -108,4 +116,4 @@ const move = async (filePath, newDir) => {
   }
 }
 
-export { list, cat, create, rn, cp, remove, move };
+export { list, cat, create, rn, cp, remove, move, makeDir };

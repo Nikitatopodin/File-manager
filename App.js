@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { goUp, cd } from './navigation.js';
-import { list, cat, create, rn, cp, remove, move } from './fs.js';
+import { list, cat, create, rn, cp, remove, move, makeDir } from './fs.js';
 import { calcHash } from './hash.js';
 import { zip, unzip } from './compression.js';
 import { logCPUArch, logCPUInfo, logEOL, logHomeDir, logUserName } from './os.js';
@@ -51,6 +51,10 @@ const startApp = async () => {
           break;
         }
         await rn(renamePaths.filePath, renamePaths.newFilePath);
+        console.log(`You are currently in ${workingDir}`);
+        break;
+      case (str.startsWith('mkdir')):
+        await makeDir(workingDir, parseSinglePath(str.slice(6)));
         console.log(`You are currently in ${workingDir}`);
         break;
       case (str.startsWith('add')):
