@@ -7,19 +7,11 @@ import { logCPUArch, logCPUInfo, logEOL, logHomeDir, logUserName } from './os.js
 import { parsePaths, parseSinglePath } from './utils.js';
 
 const startApp = async () => {
-  let welcomeMsg = '';
-  let goodbyeMsg = '';
-  const argvArr = process.argv.slice(2);
+  const userName = process.env.npm_config_username || 'Anonymous';
+  const welcomeMsg = `Welcome to the File Manager, ${userName}!`;
+  const goodbyeMsg = `Thank you for using File Manager, ${userName}, goodbye!`;
   let workingDir = await logHomeDir();
 
-  if (argvArr.length > 0) {
-    argvArr.forEach((arg) => {
-      if (arg.startsWith('--username')) {
-        welcomeMsg += `Welcome to the File Manager, ${arg.slice(11)}!`;
-        goodbyeMsg += `Thank you for using File Manager, ${arg.slice(11)}, goodbye!`;
-      }
-    })
-  }
   console.log(welcomeMsg);
   console.log(`You are currently in ${workingDir}`);
 
